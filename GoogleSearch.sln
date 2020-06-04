@@ -1,25 +1,54 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1145
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleSearch", "GoogleSearch\GoogleSearch.csproj", "{F414AF71-B524-494E-B6AB-9357CDF4E958}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F414AF71-B524-494E-B6AB-9357CDF4E958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F414AF71-B524-494E-B6AB-9357CDF4E958}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F414AF71-B524-494E-B6AB-9357CDF4E958}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F414AF71-B524-494E-B6AB-9357CDF4E958}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {BC343B09-FBA2-419A-B408-C8F0B373B3F3}
-	EndGlobalSection
-EndGlobal
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using System;
+
+namespace GoogleSearch
+{
+
+    class SearchTest
+    {
+        IWebDriver driver;
+    
+        [SetUp]
+        public void startBrowser()
+        {
+            driver = new ChromeDriver("C:\\Program Files (x86)\\Google\\Chrome\\Application");
+        }
+
+        [Test]
+        public void test()
+        {
+            driver.Url = "http://www.google.com";
+
+            driver.Manage().Window.Maximize();
+
+            //Select the Search Box
+            IWebElement searchBox = driver.FindElement(By.XPath("//input[@name='q']"));
+
+            //Search parametar
+            searchBox.SendKeys("Mitto CH");
+
+            //Search action
+            driver.FindElement(By.XPath("//input[@name='q']")).SendKeys(Keys.Return);
+
+            //Visit the first page result
+            driver.FindElement(By.XPath("//*[@id='rso']/div[1]/div/div/div[1]/a/h3")).Click();
+
+            //Get the title of the page
+            String title = driver.Title;
+
+            //Confirm page title
+            Assert.AreEqual("Mitto | Advanced customer engagement technology built for the agile enterprise | Mitto", title);
+
+        }
+
+        [TearDown]
+        public void closeBrowser()
+        {
+            driver.Close();
+        }
+        
+
+    }
+}
